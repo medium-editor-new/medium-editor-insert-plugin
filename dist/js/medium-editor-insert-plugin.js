@@ -166,7 +166,7 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
 ;(function ($, window, document, undefined) {
 
     'use strict';
-
+    console.log('**************test**************************');
     /** Default values */
     var pluginName = 'mediumInsert',
         defaults = {
