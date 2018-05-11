@@ -56,9 +56,7 @@ this["MediumInsert"]["Templates"]["src/js/templates/core-buttons.hbs"] = Handleb
 this["MediumInsert"]["Templates"]["src/js/templates/core-caption.hbs"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper;
 
-  return "<figcaption contenteditable=\"true\" class=\"medium-insert-caption-placeholder\" data-placeholder=\""
-    + container.escapeExpression(((helper = (helper = helpers.placeholder || (depth0 != null ? depth0.placeholder : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"placeholder","hash":{},"data":data}) : helper)))
-    + "\"></figcaption>";
+  return "";
 },"useData":true});
 
 this["MediumInsert"]["Templates"]["src/js/templates/core-empty-line.hbs"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -114,7 +112,7 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-image.hbs"] = Handleb
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "<figure contenteditable=\"false\">\n    <img src=\""
+  return "<figure><img src=\""
     + container.escapeExpression(((helper = (helper = helpers.img || (depth0 != null ? depth0.img : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"img","hash":{},"data":data}) : helper)))
     + "\" alt=\"\" />\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.progress : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
@@ -166,7 +164,7 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
 ;(function ($, window, document, undefined) {
 
     'use strict';
-    console.log('**************test**************************');
+
     /** Default values */
     var pluginName = 'mediumInsert',
         defaults = {
@@ -910,7 +908,7 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
     Embeds.prototype.init = function () {
         var $embeds = this.$el.find('.medium-insert-embeds');
 
-        $embeds.attr('contenteditable', false);
+        //$embeds.attr('contenteditable', false);
         $embeds.each(function () {
             if ($(this).find('.medium-insert-embeds-overlay').length === 0) {
                 $(this).append($('<div />').addClass('medium-insert-embeds-overlay'));
@@ -933,7 +931,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
             .on('keydown', $.proxy(this, 'removeEmbed'))
             .on('click', '.medium-insert-embeds-toolbar .medium-editor-action', $.proxy(this, 'toolbarAction'))
             .on('click', '.medium-insert-embeds-toolbar2 .medium-editor-action', $.proxy(this, 'toolbar2Action'));
-
         this.$el
             .on('keyup click paste', $.proxy(this, 'togglePlaceholder'))
             .on('keydown', $.proxy(this, 'processLink'))
@@ -1392,10 +1389,8 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
 
     Embeds.prototype.removeEmbed = function (e) {
         var $embed, $empty;
-
         if (e.which === 8 || e.which === 46) {
             $embed = this.$el.find('.medium-insert-embeds-selected');
-
             if ($embed.length) {
                 e.preventDefault();
 
@@ -1633,7 +1628,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
             },
             sorting: function () {
                 var that = this;
-                console.log('test');
                 // $('.medium-insert-images').sortable({
                 //     group: 'medium-insert-images',
                 //     containerSelector: '.medium-insert-images',
@@ -1702,7 +1696,7 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
         var $images = this.$el.find('.medium-insert-images');
 
         $images.find('figcaption').attr('contenteditable', true);
-        $images.find('figure').attr('contenteditable', false);
+        //$images.find('figure').attr('contenteditable', false);
 
         this.events();
         this.backwardsCompatibility();
@@ -1814,6 +1808,7 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
      */
 
     Images.prototype.uploadAdd = function (e, data) {
+
         var $place = this.$el.find('.medium-insert-active'),
             that = this,
             uploadErrors = [],
@@ -1840,7 +1835,7 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
         }
 
         this.core.hideButtons();
-
+        console.log($place.hasClass('medium-insert-images') && $place.hasClass('medium-insert-active'))
         // Replace paragraph with div, because figure elements can't be inside paragraph
         if ($place.is('p')) {
             $place.replaceWith('<div class="medium-insert-active">' + $place.html() + '</div>');
@@ -1851,6 +1846,20 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
                 $place.after('<p><br></p>'); // add empty paragraph so we can move the caret to the next line.
                 this.core.moveCaret($place.next());
             }
+        }else if($place.hasClass('medium-insert-images') && $place.hasClass('medium-insert-active')) {
+          $place.removeClass('medium-insert-active');
+          if($place.hasClass('medium-insert-images-grid')) {
+            $place.after('<div class="medium-insert-active medium-insert-images-grid"></div>');
+          } else {
+            $place.after('<div class="medium-insert-active"></div>');
+          };
+          $place = this.$el.find('.medium-insert-active');
+          if ($place.next().is('p')) {
+              this.core.moveCaret($place.next());
+          } else {
+              $place.after('<p><br></p>'); // add empty paragraph so we can move the caret to the next line.
+              this.core.moveCaret($place.next());
+          }
         }
 
         $place.addClass('medium-insert-images');
@@ -2007,7 +2016,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
         }
 
         this.core.triggerInput();
-
         return data.context;
     };
 
@@ -2024,11 +2032,30 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
 
     Images.prototype.selectImage = function (e) {
         var that = this,
-            $image;
-
+            $image = $(e.target);;
+        $(document).on('keyup', function(e) {
+            if(event.which === 13) {
+                that.core.hideAddons();
+                $('.medium-insert-images-toolbar, .medium-insert-images-toolbar2').remove();
+                that.core.triggerInput();
+                $image.removeClass("medium-insert-image-active");
+                var $imageParent = $image.closest('.medium-insert-images');
+                var position = $imageParent.next('p');
+                if(position.length < 1) {
+                    position = $('<p class="medium-insert-active"><br></p>');
+                    $imageParent.after(position);
+                }
+                $('.medium-insert-active.medium-insert-images').find('figure').each(function(i, e) {
+                  if($(e).find('img').length < 1) {
+                    $(e).remove();
+                  }
+                })
+                $('.editable').focus();
+                document.getSelection().collapse(position[0], 0);
+                $(document).off('keyup');
+            }
+        })
         if (this.core.options.enabled) {
-            $image = $(e.target);
-
             this.$currentImage = $image;
 
             // Hide keyboard on mobile devices
@@ -2057,7 +2084,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
     Images.prototype.unselectImage = function (e) {
         var $el = $(e.target),
             $image = this.$el.find('.medium-insert-image-active');
-
         if ($el.is('img') && $el.hasClass('medium-insert-image-active')) {
             $image.not($el).removeClass('medium-insert-image-active');
             $('.medium-insert-images-toolbar, .medium-insert-images-toolbar2').remove();
@@ -2087,31 +2113,80 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
         var images = [],
             $selectedImage = this.$el.find('.medium-insert-image-active'),
             $parent, $empty, selection, range, current, caretPosition, $current, $sibling, selectedHtml, i;
-
+        
+        if(e.which === 13) {
+            var selection = window.getSelection();
+            if (selection && selection.rangeCount) {
+                var range = selection.getRangeAt(0);
+                var node  = range.commonAncestorContainer;
+                var $imageParent = $(node).closest('.medium-insert-images');
+                if(node && node.nodeName && node.nodeName === "FIGURE") {
+                    if(selection.focusOffset === 0) {
+                        var position = $('<p class="medium-insert-active"><br></p>');
+                        $imageParent.before(position);
+                        //var position = $imageParent.prev();
+                        //$('.editable').focus();
+                        document.getSelection().collapse(position[0], 0);
+                        return;
+                    }else if(selection.focusOffset === 1) {
+                        console.log(selection.focusOffset)
+                        //var position = $('<p class="medium-insert-active"><br></p>');
+                        //$imageParent.after(position);
+                        var position = $imageParent.next();
+                        $('.editable').focus();
+                        document.getSelection().collapse(position[0], 0);
+                        return;
+                    }
+                }
+            }
+        }
         if (e.which === 8 || e.which === 46) {
+            
             if ($selectedImage.length) {
                 images.push($selectedImage);
             }
-
             // Remove image even if it's not selected, but backspace/del is pressed in text
             selection = window.getSelection();
+            
             if (selection && selection.rangeCount) {
                 range = selection.getRangeAt(0);
                 current = range.commonAncestorContainer;
                 $current = current.nodeName === '#text' || current.nodeName === 'BR' ? $(current).parent() : $(current);
                 caretPosition = MediumEditor.selection.getCaretOffsets(current).left;
-
+                if(e.which === 8 && $(current).children('img').length > 0 && selection.focusOffset === 0) {
+                    var $image = $(current).closest('.medium-insert-images');
+                    var prev = $image.prev();
+                    var prevContent = prev.html();
+                    var prevNodeName = prev.prop("nodeName");
+                    if((prevNodeName === 'P' && prevContent !== '<br>') || (prevNodeName === 'DIV' && prev.find('img').length > 0)) {
+                        var offset = prevContent.length - 1;
+                        selection.collapse(prev[0], 1);
+                        return false;
+                    }
+                }else if (e.which === 8 && $(current).children('img').length > 0 && selection.focusOffset === 1) {
+                    var $image = $(current).closest('.medium-insert-images');
+                    $image.remove();
+                }else if(e.which === 8 && current.nodeName === 'DIV' && $(current).hasClass('medium-insert-images')) {
+                    var prev = $(current).prev();
+                    if(prev.length === 0) {
+                        prev = $('<p class="medium-insert-active"><br></p>')
+                        $(current).before(prev);
+                    }
+                    selection.collapse(prev[0], 1);
+                    $(current).remove();
+                    return false;
+                }
                 // Is backspace pressed and caret is at the beginning of a paragraph, get previous element
-                if (e.which === 8 && caretPosition === 0) {
-                    $sibling = $current.prev();
-                // Is del pressed and caret is at the end of a paragraph, get next element
-                } else if (e.which === 46 && caretPosition === $current.text().length) {
-                    $sibling = $current.next();
-                }
+                // if (e.which === 8 && caretPosition === 0) {
+                //     $sibling = $current.prev();
+                // // Is del pressed and caret is at the end of a paragraph, get next element
+                // } else if (e.which === 46 && caretPosition === $current.text().length) {
+                //     $sibling = $current.next();
+                // }
 
-                if ($sibling && $sibling.hasClass('medium-insert-images')) {
-                    images.push($sibling.find('img'));
-                }
+                // if ($sibling && $sibling.hasClass('medium-insert-images')) {
+                //     images.push($sibling.find('img'));
+                // }
 
                 // If text is selected, find images in the selection
                 selectedHtml = MediumEditor.selection.getSelectionHtml(document);
@@ -2121,8 +2196,8 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
                     });
                 }
             }
-
             if (images.length) {
+
                 for (i = 0; i < images.length; i++) {
                     this.deleteFile(images[i].attr('src'), images[i]);
 
@@ -2135,20 +2210,21 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
                             $empty = $(this.templates['src/js/templates/core-empty-line.hbs']().trim());
                             $parent.before($empty);
                         }
+                        if (!selectedHtml && $empty) {
+                            e.preventDefault();
+                            this.core.moveCaret($empty);
+                        }
                         $parent.remove();
                     }
                 }
 
                 // Hide addons
                 this.core.hideAddons();
-                if (!selectedHtml && $empty) {
-                    e.preventDefault();
-                    this.core.moveCaret($empty);
-                }
 
                 $('.medium-insert-images-toolbar, .medium-insert-images-toolbar2').remove();
                 this.core.triggerInput();
             }
+            
         }
     };
 
@@ -2363,7 +2439,24 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
             }
         });
     };
-
+    $(document).on('keyup', function(e) {
+      var $figure = $('.medium-insert-active').find('figure');
+      if(e.which === 13 && $figure.length > 1 && $figure.find('br').length > 0) {
+        $figure.find('br').remove();
+        $figure.find('img').length < 1 && $figure.remove();
+        var $imageParent = $figure.closest('.medium-insert-images');
+        var position = $imageParent.prev('p');
+        if(position.length < 1) {
+            position = $('<p class="medium-insert-active"><br></p>');
+            $imageParent.before(position);
+        }
+        $figure.parent().removeClass('medium-insert-active');
+        setTimeout(function() {
+          document.getSelection().collapse(position[0], 0);
+        },10)
+        
+      }
+    })
 })(jQuery, window, document, MediumEditor.util);
 
 }));
