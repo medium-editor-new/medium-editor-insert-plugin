@@ -242,7 +242,7 @@
     letter-spacing:1px;
     color: #999;
 }
-.editable h6{
+.editable blockquote{
     /*引用*/
     font-size: 18px;
     line-height: 26px;
@@ -268,12 +268,6 @@
 }
 .medium-editor-action.medium-editor-action-h4:before{
   content: "副标题";
-}
-.medium-editor-action.medium-editor-action-h6 b{
-  display: none;
-}
-.medium-editor-action.medium-editor-action-h6:before{
-  content: "引用";
 }
 .medium-editor-action.medium-editor-action-anchor:before{
   content: "\e60f";
