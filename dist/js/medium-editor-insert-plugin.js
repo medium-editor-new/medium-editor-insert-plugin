@@ -336,7 +336,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
                 $(el).data('plugin_' + pluginName).disable();
             }
         });
-
         this._destroy();
     };
 
@@ -828,12 +827,13 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
     'use strict';
 
     /** Default values */
+    // http://medium.iframe.ly/api/oembed?iframe=1
     var pluginName = 'mediumInsert',
         addonName = 'Embeds', // first char is uppercase
         defaults = {
             label: '<span class="fa fa-youtube-play"></span>',
             placeholder: 'Paste a YouTube, Vimeo, Facebook, Twitter or Instagram link and press Enter',
-            oembedProxy: 'http://medium.iframe.ly/api/oembed?iframe=1',
+            oembedProxy:"http://alibabaued.daily.taobao.net/background/article/GetVideoIframe.json?iframe=1",
             captions: true,
             captionPlaceholder: 'Type caption (optional)',
             storeMeta: false,
@@ -1086,7 +1086,7 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
     Embeds.prototype.processLink = function (e) {
         var $place = this.$el.find('.medium-insert-embeds-active'),
             url;
-
+            console.log($place,33);
         if (!$place.length) {
             return;
         }
@@ -1835,7 +1835,7 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
         }
 
         this.core.hideButtons();
-        console.log($place.hasClass('medium-insert-images') && $place.hasClass('medium-insert-active'))
+        // console.log($place.hasClass('medium-insert-images') && $place.hasClass('medium-insert-active'))
         // Replace paragraph with div, because figure elements can't be inside paragraph
         if ($place.is('p')) {
             $place.replaceWith('<div class="medium-insert-active">' + $place.html() + '</div>');
@@ -2033,11 +2033,7 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
     Images.prototype.selectImage = function (e) {
         var that = this,
             $image = $(e.target);;
-<<<<<<< HEAD
         $(document).on('keyup', function(e) {
-=======
-        $(document).on('keyup', function() {
->>>>>>> 3570e4c2558f804e04cb618f3779a302159f5f8e
             if(event.which === 13) {
                 that.core.hideAddons();
                 $('.medium-insert-images-toolbar, .medium-insert-images-toolbar2').remove();
@@ -2049,14 +2045,11 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
                     position = $('<p class="medium-insert-active"><br></p>');
                     $imageParent.after(position);
                 }
-<<<<<<< HEAD
                 $('.medium-insert-active.medium-insert-images').find('figure').each(function(i, e) {
                   if($(e).find('img').length < 1) {
                     $(e).remove();
                   }
                 })
-=======
->>>>>>> 3570e4c2558f804e04cb618f3779a302159f5f8e
                 $('.editable').focus();
                 document.getSelection().collapse(position[0], 0);
                 $(document).off('keyup');
@@ -2136,7 +2129,7 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
                         document.getSelection().collapse(position[0], 0);
                         return;
                     }else if(selection.focusOffset === 1) {
-                        console.log(selection.focusOffset)
+                        // console.log(selection.focusOffset)
                         //var position = $('<p class="medium-insert-active"><br></p>');
                         //$imageParent.after(position);
                         var position = $imageParent.next();
