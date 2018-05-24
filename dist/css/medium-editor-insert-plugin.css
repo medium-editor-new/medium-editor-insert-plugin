@@ -269,7 +269,7 @@
 .medium-editor-action.medium-editor-action-h4:before{
   content: "副标";
 }
-.medium-editor-action.medium-editor-action-justifyLeft.medium-editor-button-first b{
+.medium-editor-action.medium-editor-action-justifyLeft b{
   display: none;
 }
 .medium-editor-action.medium-editor-action-justifyCenter b{
@@ -294,7 +294,7 @@
   -webkit-text-stroke-width: 0.15px;
   -moz-osx-font-smoothing: grayscale;
 }
-.medium-editor-action.medium-editor-action-justifyLeft.medium-editor-button-first:before{
+.medium-editor-action.medium-editor-action-justifyLeft:before{
   content: "\e629";
   font-family:"iconfont" !important;
   font-size:19px;font-style:normal;
