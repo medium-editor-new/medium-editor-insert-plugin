@@ -267,7 +267,7 @@
   display: none;
 }
 .medium-editor-action.medium-editor-action-h4:before{
-  content: "副标题";
+  content: "副标";
 }
 .medium-editor-action.medium-editor-action-anchor:before{
   content: "\e60f";
