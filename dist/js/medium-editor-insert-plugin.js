@@ -708,7 +708,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
         var $a = $(e.currentTarget),
             addon = $a.data('addon'),
             action = $a.data('action');
-
         this.$el.data('plugin_' + pluginName + ucfirst(addon))[action]();
     };
 
@@ -913,7 +912,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
                 $(this).append($('<div />').addClass('medium-insert-embeds-overlay'));
             }
         });
-
         this.events();
         this.backwardsCompatibility();
     };
@@ -1035,7 +1033,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
         if (!selection || selection.rangeCount === 0) {
             return;
         }
-
         range = selection.getRangeAt(0);
         $current = $(range.commonAncestorContainer);
 
@@ -1061,6 +1058,7 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
 
         } else {
             this.$el.find('.medium-insert-embeds-active').remove();
+
         }
     };
 
@@ -1088,7 +1086,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
         if (!$place.length) {
             return;
         }
-
         url = $place.text().trim();
 
         // Return empty placeholder on backspace, delete or enter
@@ -1395,16 +1392,13 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
             $embed = this.$el.find('.medium-insert-embeds-selected');
             if ($embed.length) {
                 e.preventDefault();
-
                 $('.medium-insert-embeds-toolbar, .medium-insert-embeds-toolbar2').remove();
-
                 $empty = $(this.templates['src/js/templates/core-empty-line.hbs']().trim());
                 $embed.before($empty);
                 $embed.remove();
 
                 // Hide addons
                 this.core.hideAddons();
-
                 this.core.moveCaret($empty);
                 this.core.triggerInput();
             }
@@ -1810,7 +1804,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
      */
 
     Images.prototype.uploadAdd = function (e, data) {
-
         var $place = this.$el.find('.medium-insert-active'),
             that = this,
             uploadErrors = [],
@@ -1976,7 +1969,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
             domImage = this.getDOMImage();
             domImage.onload = function () {
                 data.context.find('img').attr('src', img);
-
                 if (this.options.uploadCompleted) {
                     this.options.uploadCompleted(data.context, data);
                 }
@@ -2024,7 +2016,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
     Images.prototype.getDOMImage = function () {
         return new window.Image();
     };
-
     /**
      * Select clicked image
      *
@@ -2068,7 +2059,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
 
             setTimeout(function () {
                 that.addToolbar();
-
                 if (that.options.captions) {
                     that.core.addCaption($image.closest('figure'), that.options.captionPlaceholder);
                 }
@@ -2143,18 +2133,24 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
             }
         }
         if (e.which === 8 || e.which === 46) {
-            
             if ($selectedImage.length) {
                 images.push($selectedImage);
             }
             // Remove image even if it's not selected, but backspace/del is pressed in text
             selection = window.getSelection();
-            
             if (selection && selection.rangeCount) {
                 range = selection.getRangeAt(0);
                 current = range.commonAncestorContainer;
                 $current = current.nodeName === '#text' || current.nodeName === 'BR' ? $(current).parent() : $(current);
                 caretPosition = MediumEditor.selection.getCaretOffsets(current).left;
+                //防止光标删除
+                if(selection.focusOffset === 0 && this.$el.children('p').length === 0) {
+                    var position = $('<p class="medium-insert-active"><br></p>');
+                    this.$el.append(position);
+                    //var position = $imageParent.prev();
+                    //$('.editable').focus();
+                    document.getSelection().collapse(position[0], 0);
+                }
                 if(e.which === 8 && $(current).children('img').length > 0 && selection.focusOffset === 0) {
                     var $image = $(current).closest('.medium-insert-images');
                     var prev = $image.prev();
@@ -2199,7 +2195,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
                 }
             }
             if (images.length) {
-
                 for (i = 0; i < images.length; i++) {
                     this.deleteFile(images[i].attr('src'), images[i]);
 
@@ -2219,7 +2214,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
                         $parent.remove();
                     }
                 }
-
                 // Hide addons
                 this.core.hideAddons();
 
