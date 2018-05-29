@@ -255,7 +255,6 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
         if (typeof this.options.addons !== 'object' || Object.keys(this.options.addons).length === 0) {
             this.disable();
         }
-
         this.initAddons();
         this.clean();
         this.events();
@@ -831,7 +830,7 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
         defaults = {
             label: '<span class="fa fa-youtube-play"></span>',
             placeholder: 'Paste a YouTube, Vimeo, Facebook, Twitter or Instagram link and press Enter',
-            oembedProxy:"http://www.alibabaued.com/background/article/GetVideoIframe.json?iframe=1",
+            oembedProxy:"/background/article/GetVideoIframe.json?iframe=1",
             captions: true,
             captionPlaceholder: 'Type caption (optional)',
             storeMeta: false,
@@ -1139,60 +1138,55 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
 
     Embeds.prototype.oembed = function (url, pasted) {
         var that = this;
-        var id = new Date().toLocaleTimeString();
+        // var id = new Date().toLocaleTimeString();
         $.support.cors = true;
-        var data = {"cache_age":0,"content_length":0,"html":"<div style='margin:auto;'> <!-- You're using demo endpoint of Iframely API commercially. Max-width is limited to 320px. Please get your own API key at https://iframely.com. --><div><div style='left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;'><iframe src="+url+" style='border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;' allowfullscreen></iframe></div></div></div>","id":id,"type":"video","url":url,"version":"1.0"};
-        var html = data && data.html;
-        html += '<div class="medium-insert-embeds-meta"><script type="text/json">' + JSON.stringify(data) + '</script></div>';
-        $.proxy(that, 'embed', html)();
-        // $.ajax({
-        //     crossDomain: true,
-        //     cache: false,
-        //     url: this.options.oembedProxy,
-        //     dataType: 'json',
-        //     data: {
-        //         url: url
-        //     },
-        //     success: function (data) {
-        //       console.log(data,33)
-        //         var html = data && data.html;
+        // var data = {"cache_age":0,"content_length":0,"html":"<div style='margin:auto;'> <!-- You're using demo endpoint of Iframely API commercially. Max-width is limited to 320px. Please get your own API key at https://iframely.com. --><div><div style='left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;'><iframe src="+url+" style='border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;' allowfullscreen></iframe></div></div></div>","id":id,"type":"video","url":url,"version":"1.0"};
+        // var html = data && data.html;
+        // html += '<div class="medium-insert-embeds-meta"><script type="text/json">' + JSON.stringify(data) + '</script></div>';
+        // $.proxy(that, 'embed', html)();
+        $.ajax({
+            crossDomain: true,
+            cache: false,
+            url: this.options.oembedProxy,
+            dataType: 'json',
+            data: {
+                url: url
+            },
+            success: function (data) {
+                var html = data && data.html;
+                if (that.options.storeMeta) {
+                    html += '<div class="medium-insert-embeds-meta"><script type="text/json">' + JSON.stringify(data) + '</script></div>';
+                }
+                if (data && !html && data.type === 'photo' && data.url) {
+                    html = '<img src="' + data.url + '" alt="">';
+                }
+                if (!html) {
+                    // Prevent render empty embed.
+                    $.proxy(that, 'convertBadEmbed', url)();
+                    return;
+                }
+                if (pasted) {
+                    $.proxy(that, 'embed', html, url)();
+                } else {
+                    $.proxy(that, 'embed', html)();
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                var responseJSON = (function () {
+                    try {
+                        return JSON.parse(jqXHR.responseText);
+                    } catch (e) { }
+                })();
 
-        //         if (that.options.storeMeta) {
-        //             html += '<div class="medium-insert-embeds-meta"><script type="text/json">' + JSON.stringify(data) + '</script></div>';
-        //         }
+                if (typeof window.console !== 'undefined') {
+                    window.console.log((responseJSON && responseJSON.error) || jqXHR.status || errorThrown.message);
+                } else {
+                    window.alert('Error requesting media from ' + that.options.oembedProxy + ' to insert: ' + errorThrown + ' (response status: ' + jqXHR.status + ')');
+                }
 
-        //         if (data && !html && data.type === 'photo' && data.url) {
-        //             html = '<img src="' + data.url + '" alt="">';
-        //         }
-
-        //         if (!html) {
-        //             // Prevent render empty embed.
-        //             $.proxy(that, 'convertBadEmbed', url)();
-        //             return;
-        //         }
-
-        //         if (pasted) {
-        //             $.proxy(that, 'embed', html, url)();
-        //         } else {
-        //             $.proxy(that, 'embed', html)();
-        //         }
-        //     },
-        //     error: function (jqXHR, textStatus, errorThrown) {
-        //         var responseJSON = (function () {
-        //             try {
-        //                 return JSON.parse(jqXHR.responseText);
-        //             } catch (e) { }
-        //         })();
-
-        //         if (typeof window.console !== 'undefined') {
-        //             window.console.log((responseJSON && responseJSON.error) || jqXHR.status || errorThrown.message);
-        //         } else {
-        //             window.alert('Error requesting media from ' + that.options.oembedProxy + ' to insert: ' + errorThrown + ' (response status: ' + jqXHR.status + ')');
-        //         }
-
-        //         $.proxy(that, 'convertBadEmbed', url)();
-        //     }
-        // });
+                $.proxy(that, 'convertBadEmbed', url)();
+            }
+        });
     };
 
     /**
