@@ -830,7 +830,7 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
         defaults = {
             label: '<span class="fa fa-youtube-play"></span>',
             placeholder: 'Paste a YouTube, Vimeo, Facebook, Twitter or Instagram link and press Enter',
-            oembedProxy:"/background/article/GetVideoIframe.json?iframe=1",
+            oembedProxy:"http://medium.iframe.ly/api/oembed?iframe=1",
             captions: true,
             captionPlaceholder: 'Type caption (optional)',
             storeMeta: false,
@@ -1177,13 +1177,18 @@ this["MediumInsert"]["Templates"]["src/js/templates/images-toolbar.hbs"] = Handl
                         return JSON.parse(jqXHR.responseText);
                     } catch (e) { }
                 })();
-
                 if (typeof window.console !== 'undefined') {
                     window.console.log((responseJSON && responseJSON.error) || jqXHR.status || errorThrown.message);
                 } else {
                     window.alert('Error requesting media from ' + that.options.oembedProxy + ' to insert: ' + errorThrown + ' (response status: ' + jqXHR.status + ')');
                 }
-
+                if(responseJSON.status === 418){
+                  var id = new Date().toLocaleTimeString();
+                  var data = {"cache_age":0,"content_length":0,"html":"<div style='margin:auto;'> <!-- You're using demo endpoint of Iframely API commercially. Max-width is limited to 320px. Please get your own API key at https://iframely.com. --><div><div style='left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;'><iframe src="+url+" style='border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;' allowfullscreen></iframe></div></div></div>","id":id,"type":"video","url":url,"version":"1.0"};
+                  var html = data && data.html;
+                  html += '<div class="medium-insert-embeds-meta"><script type="text/json">' + JSON.stringify(data) + '</script></div>';
+                  $.proxy(that, 'embed', html)();
+                }
                 $.proxy(that, 'convertBadEmbed', url)();
             }
         });
